@@ -6,7 +6,7 @@
 /*   By: tomlimon <tomlimon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 14:08:43 by tomlimon          #+#    #+#             */
-/*   Updated: 2024/12/10 14:11:45 by tomlimon         ###   ########.fr       */
+/*   Updated: 2024/12/10 14:45:56 by tomlimon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,5 +18,7 @@
 
 #include <unistd.h>
 #include <stdio.h>
+#include <fcntl.h>
+#include <stdlib.h>
 
 #endif

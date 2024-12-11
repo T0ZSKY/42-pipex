@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomlimon <tomlimon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: tomlimon <tom.limon@>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/10 14:08:19 by tomlimon          #+#    #+#             */
-/*   Updated: 2024/12/10 15:25:11 by tomlimon         ###   ########.fr       */
+/*   Updated: 2024/12/11 01:46:19 by tomlimon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/pipex.h"
 
-int	main(int argc, char **argv)
+int	main(int argc, char **argv, char **envp)
 {
 	pid_t pid;
 	int fd[2];
@@ -34,32 +34,66 @@ int	main(int argc, char **argv)
 	if (outfile_fd == -1)
 	{
 		perror("Error with file2\n");
+		close(infile_fd);
 		return (-1);
 	}
 	if (pipe(fd) == -1)
 	{
 		perror("Error pipe\n");
+		close(infile_fd);
+		close(outfile_fd);
 		return (-1);
 	}
 	pid = fork();
 	if (pid == -1)
-	{
 		perror("Error fork\n");
-	}
 	else if (pid == 0)
 	{
+		// Processus enfant : cmd1
 		close(fd[0]);
-		printf("Je suis enfant\n");
-		
+		if (dup2(infile_fd, STDIN_FILENO) == -1)
+		{
+			perror("Error dup2 infile");
+			exit(1);
+		}
+		if (dup2(fd[1], STDOUT_FILENO) == -1)
+		{
+			perror("Error dup2 pipe write");
+			exit(1);
+		}
+		close(infile_fd);
 		close(fd[1]);
+		close(outfile_fd);
+		if (execve("/bin/sh", (char *[]) {"/bin/sh", "-c", argv[2], NULL}, envp) == -1)
+		{
+			perror("Error execve cmd1");
+			exit(1);
+		}
 	}
 	else
 	{
+		// Processus parent : cmd2
 		close(fd[1]);
-		printf("Je suis le parent\n");
-
+		if (dup2(fd[0], STDIN_FILENO) == -1)
+		{
+			perror("Error dup2 pipe read");
+			exit(1);
+		}
+		if (dup2(outfile_fd, STDOUT_FILENO) == -1)
+		{
+			perror("Error dup2 outfile");
+			exit(1);
+		}
+		close(outfile_fd);
 		close(fd[0]);
+		close(infile_fd);
+		if (execve("/bin/sh", (char *[]) {"/bin/sh", "-c", argv[3], NULL}, envp) == -1)
+		{
+			perror("Error execve cmd2");
+			exit(1);
+		}
 	}
 	close(infile_fd);
 	close(outfile_fd);
+	return (0);
 }

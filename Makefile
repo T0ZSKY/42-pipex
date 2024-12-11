@@ -6,13 +6,13 @@
 #    By: tomlimon <tomlimon@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/12/03 13:38:25 by tomlimon          #+#    #+#              #
-#    Updated: 2024/12/10 14:13:35 by tomlimon         ###   ########.fr        #
+#    Updated: 2024/12/11 14:33:36 by tomlimon         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = pipex
 
-SRCS = ./src/main.c
+SRCS = ./src/main.c ./src/error.c
 
 LIBFT_SRCS = 
 
